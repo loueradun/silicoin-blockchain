@@ -9,7 +9,6 @@ from typing import Dict, List, Optional, Set, Tuple, Union
 from blspy import G1Element
 from clvm.casts import int_from_bytes
 
-from chia.consensus import hardfork
 from chia.consensus.block_body_validation import validate_block_body
 from chia.consensus.block_header_validation import validate_finished_header_block, validate_unfinished_header_block
 from chia.consensus.block_record import BlockRecord
@@ -964,44 +963,7 @@ class Blockchain(BlockchainInterface):
             return uint128(0)
 
     async def get_farmer_difficulty_coeff(self, farmer_public_key: G1Element) -> float:
-        block_range = 4608 * 3
-        curr: Optional[BlockRecord] = self.get_peak()
-        begin_height = max((curr.height if curr is not None else 0) - block_range, 1)
-        blocks = 0
-        while curr is not None and curr.height > begin_height:
-            if curr.farmer_public_key == farmer_public_key:
-                blocks += 1
-            curr = self.try_block_record(curr.prev_hash)
-        network_space = await self.get_peak_network_space(block_range)
-        staking = await self.get_peak_farmer_staking(farmer_public_key)
-        minimal_staking = network_space / (block_range * 100)
-
-        coeff = 0
-        space = 0
-        if staking < minimal_staking:
-            coeff = 20.0
-        else:
-            if blocks == 0:
-                coeff = 1.0
-            else:
-                # multiple 1000 to keep same scale as sit
-                space = uint128(int(network_space * blocks / block_range))
-
-                if self.get_peak_height() < hardfork.HARDFORK_FIX_SPACE_UNIT_STEP1:
-                    space *= 1000
-                elif self.get_peak_height() < hardfork.HARDFORK_FIX_SPACE_UNIT_STEP2:
-                    space *= 100
-                elif self.get_peak_height() < hardfork.HARDFORK_FIX_SPACE_UNIT_STEP3:
-                    space *= 10
-
-                if space == 0:
-                    coeff = 1.0
-                elif staking >= space:
-                    coeff = 0.5 + 1 / (staking / space + 1)
-                else:
-                    coeff = 0.05 + 1 / (staking / space + 0.05)
-
-        return coeff
+        return 0.5
 
     async def get_peak_farmer_staking(self, farmer_public_key: G1Element) -> uint64:
         curr: BlockRecord = self.get_peak()
