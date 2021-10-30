@@ -1,3 +1,13 @@
+# What is this?
+
+This client was created to test the viability of disabling staking within the Silicoin client.
+Coins farmed here are not valid on the Silicoin mainnet.
+
+The following changes have been made on this fork:
+1) The ports have been fixed to not use the same ports as Cactus.
+2) The get_farmer_difficulty_coeff was changed to 0.5 to test whether this would truly disable staking.
+3) Code was added to disconnect clients of the main chain which would invalidate the test.
+
 # silicoin-blockchain (SIT)
 
 ![IMG_4734](https://github.com/silicoin-network/silicoin-blockchain-gui/raw/main/src/assets/img/chia_circle.png)
